@@ -105,8 +105,8 @@
     if (isSorted) {
       for (var i = 0; i < array.length; i++) {
         for (var j = i + 1; j < array.length; j++) {
-          if (array[i] !== array[j]) {
-            uniqs.push(array[j]);
+          if (array[i] < array[j]) {
+            uniqs.push(array[i]);
           }
         }
         if (array[i] !== array[i + 1]) {
@@ -212,12 +212,31 @@
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
+    if (iterator === undefined) {
+      iterator = _.identity;
+    }
+    return _.reduce(collection, function(memo, value) {
+      if (!iterator(value)) {
+        memo = false;  
+      }
+      return memo;
+    }, true);
     // TIP: Try re-using reduce() here.
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
+    var result = false;
+    if (iterator === undefined) {
+      iterator = _.identity;
+    }    
+    _.every(collection, function(val) {
+      if (iterator(val)) {
+        result = true;
+      }
+    });
+    return result;
     // TIP: There's a very clever way to re-use every() here.
   };
 
@@ -241,6 +260,15 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    //  for loop through arguments
+    var result = arguments[0];
+    for (var i = 1; i < arguments.length; i++) {
+      for (var key in arguments[i]) {
+        result[key] = arguments[i][key];
+      }
+    }
+    return result;
+    //  add keys and values from arguments to obj
   };
 
   // Like extend, but doesn't ever overwrite a key that already
