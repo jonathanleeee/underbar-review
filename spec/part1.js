@@ -332,7 +332,7 @@
         var iterator = function(value) { return value === 1; };
         var numbers = [1, 2, 2, 3, 4, 4];
 
-        expect(FILL_ME_IN).to.eql([1, 2]);
+        expect(_.uniq(numbers, true, iterator)).to.eql([1, 2]);
       });
 
       it('should produce a brand new array instead of modifying the input array', function() {
@@ -472,6 +472,7 @@
           // FILL_ME_IN
           // Add a line here that makes this test pass
           // for a working implementation of reduce
+          orderTraversed.push(item);
           return memo;
         }, 10);
 

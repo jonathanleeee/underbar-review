@@ -91,32 +91,53 @@
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
     return _.filter(collection, function(val) {
-      return (!test(val));      
+      return !test(val);
     });
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
-    var result = [];
-    for ( var i = 0; i < array.length; i++ ) {
-      if (_.indexOf(result, array[i]) === -1) {
-        result.push(array[i]);
-      }        
+    var uniqs = [];
+    if (iterator) {
+      _.uniq(iterator(array));
     }
-    return result;
+
+    if (isSorted) {
+      for (var i = 0; i < array.length; i++) {
+        for (var j = i + 1; j < array.length; j++) {
+          if (array[i] !== array[j]) {
+            uniqs.push(array[j]);
+          }
+        }
+        if (array[i] !== array[i + 1]) {
+          uniqs.push(array[i + 1]);
+        }
+      }
+      return uniqs;
+    } else {
+      for (var i = 0; i < array.length; i++) {
+        if (_.indexOf(uniqs, array[i]) === -1) {
+          uniqs.push(array[i]);
+        }
+      }
+    }
+
+
+    return uniqs;
   };
 
 
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
+    var mapped = [];
+    _.each(collection, function(val) {
+      mapped.push(iterator(val));
+    });
+    return mapped;
+
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
-    var result = [];
-    _.each(collection, function(val) {
-      result.push(iterator(val));
-    });
-    return result;
   };
 
   /*
@@ -158,6 +179,22 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+  // if acc is undefiend
+    if (accumulator === undefined) {
+    // acc is first element
+      accumulator = collection[0];
+      // git rid off first element slice out
+      collection = collection.slice(1);
+    }
+    //iterator = iterator || _.identity();
+  // each to call iterator on collection 
+    _.each(collection, function(value ) {
+      accumulator = iterator(accumulator, value);
+    });
+  // add it to acc
+
+  //return acc   
+    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
